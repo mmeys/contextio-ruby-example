@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require_relative 'contextio'
 
 #note the contextio library uses faraday. pretty much every time, we are interested in faraday's response body so we'll call .body on returned responses from faraday
@@ -43,7 +45,10 @@ if response['success'] == true
   puts "Hit enter to get some data from this email account!"
   gets
 else
-  puts "there was a problem with the connect token call. i can't go on. exiting."
+  puts "there was a problem with the connect token call. i can't go on."
+  puts "the response body was"
+  puts response.inspect
+  puts "exiting"
   exit 1
 end
 
@@ -54,7 +59,7 @@ end
 #first you need to get :id so lets get all the Users under your developer account
 response = cio.request(:get, 'https://api.context.io/lite/users', {}).body
 
-#since this is the first time we'll try to use your id/pwd to hit the API, lets make sure your creds are correct
+#lets ensure your API creds are correct
 #teh error message comes back as a hash whereas most other things are arrays so lets use that to inspect the response
 if response.is_a?(::Hash) && response['type']=="error"
   puts "There was a problem making the call. The error message is >> #{response['value']} << Your credentials were probably invalid. Exiting."
@@ -62,11 +67,13 @@ if response.is_a?(::Hash) && response['type']=="error"
 end
 
 users = response
+
 #then grab the last user in your Developer account (should be the one you last added) and get their ID for use with API calls
 id = users.last['id']
 
 puts
 puts "The user id is #{id}"
+puts "The email address is #{users.last['email_accounts'].first['username']}"
 
 # :label is really the email account (users can have multiple)
 # you can use "0" as an alias for the user's first email account
@@ -97,10 +104,9 @@ puts "Fetching message body.. please wait..."
 #now we can fill in the :message_id and make the API call
 random_message_body = cio.request(:get, "https://api.context.io/lite/users/#{id}/email_accounts/0/folders/INBOX/messages/#{random_message['email_message_id']}/body", {}).body
 
-puts "Printing message body for email '#{random_message['subject']}' with email_message_id #{random_message['email_message_id']}"
+puts "Printing message body for email with subject '#{random_message['subject']}' with email_message_id #{random_message['email_message_id']}"
 #message bodies can come in multiple types. most commonly, there are usually text/plain and a text/html parts. lets print out the first one's contents
-puts random_message_body.inspect
-#puts random_message_body.first['content']
+puts random_message_body.first['content']
 
 1.upto(10) do
   puts
