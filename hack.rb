@@ -5,7 +5,7 @@ require_relative 'contextio'
 #note the contextio library uses faraday. pretty much every time, we are interested in faraday's response body so we'll call .body on returned responses from faraday
 puts "************* starting ************ "
 
-puts "OK First enter your developer key. it'll look something like '070p7n1x' "
+puts "OK First enter your developer key. It's located at https://console.context.io/#settings and will look something like '070p7n1x'. hit <ENTER> after each response."
 api_key = gets.delete("\n")
 
 
@@ -107,6 +107,21 @@ random_message_body = cio.request(:get, "https://api.context.io/lite/users/#{id}
 puts "Printing message body for email with subject '#{random_message['subject']}' with email_message_id #{random_message['email_message_id']}"
 #message bodies can come in multiple types. most commonly, there are usually text/plain and a text/html parts. lets print out the first one's contents
 puts random_message_body.first['content']
+
+#now lets set the read flag on this message
+#POST https://api.context.io/lite/users/:id/email_accounts/:label/folders/:folder/messages/:message_id/read
+puts
+puts "Setting read flag on message"
+response = cio.request(:post, "https://api.context.io/lite/users/#{id}/email_accounts/0/folders/INBOX/messages/#{random_message['email_message_id']}/read", {}).body
+puts response.inspect
+
+
+#finally lets show the current flags on that message to make sure the read flag is set
+#GET https://api.context.io/lite/users/id/email_accounts/label/folders/folder/messages/message_id/flags
+puts
+puts "Getting flags on message"
+response = cio.request(:get, "https://api.context.io/lite/users/#{id}/email_accounts/0/folders/INBOX/messages/#{random_message['email_message_id']}/flags", {}).body
+puts response.inspect
 
 1.upto(10) do
   puts
