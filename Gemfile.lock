@@ -6,6 +6,7 @@ GEM
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
     multipart-post (2.0.0)
+    simple_oauth (0.2.0)
 
 PLATFORMS
   ruby
@@ -13,3 +14,4 @@ PLATFORMS
 DEPENDENCIES
   faraday
   faraday_middleware
+  simple_oauth
