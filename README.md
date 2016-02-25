@@ -6,7 +6,7 @@
 
 ## Description
 
-This is a Ruby CLI example for Context.IO.
+This is a Ruby CLI example for Context.IO Lite.
 
 ## How to
 
@@ -14,4 +14,3 @@ This is a Ruby CLI example for Context.IO.
 1. run bundler to get dependencies
 2. read the comments in example.rb
 3. execute `./example.rb`
-
